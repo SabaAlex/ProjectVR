@@ -4,41 +4,29 @@ using UnityEngine;
 
 public class CrossFadeSky : MonoBehaviour
 {
-    private Texture newTexture;
+    public Material newSkyboxMaterial;
 
-    public float BlendSpeed = 3.0f;
+    // Elapsed time
+    private float time;
 
-    private bool trigger = false;
-    private float fader = 1f;
+    // Skybox changed trigger point
+    private bool skyboxChanged;
 
     void Start()
     {
+        time = 0.0f;
 
+        skyboxChanged = false;
     }
 
     void Update()
     {
-        if (true == trigger)
+        time += Time.deltaTime;
+
+        if (time >= 8.0f && !skyboxChanged)
         {
-            fader += Time.deltaTime * BlendSpeed;
-
-            RenderSettings.skybox.SetFloat("_Blend", fader);
-
-            if (fader >= 1.0f)
-            {
-                trigger = false;
-                fader = 0f;
-
-                RenderSettings.skybox.SetTexture("_MainTex", newTexture);
-                RenderSettings.skybox.SetFloat("_Blend", 0f);
-            }
+            RenderSettings.skybox = newSkyboxMaterial;
+            skyboxChanged = true;
         }
-    }
-
-    public void CrossFadeTo(Texture curTexture)
-    {
-        newTexture = curTexture;
-        RenderSettings.skybox.SetTexture("_Texture2", curTexture);
-        trigger = true;
     }
 }
